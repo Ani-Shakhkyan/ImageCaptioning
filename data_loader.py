@@ -6,19 +6,18 @@ from PIL import Image
 import torchvision.transforms as transforms
 import re
 from collections import Counter
+import pickle
 
-import re
-from collections import Counter
 
 class Vocabulary:
     def __init__(self, freq_threshold):
         self.specials = ["<pad>", "<start>", "<end>", "<unk>"]
         self.freq_threshold = freq_threshold
-        self.itos = []  # Index-to-string mapping
-        self.word_to_index = {}  # String-to-index mapping
+        self.index_to_word = []  
+        self.word_to_index = {}  
 
     def __len__(self):
-        return len(self.itos)
+        return len(self.index_to_word)
 
     def tokenize(self, text):
         return [s.lower() for s in re.split(r'\W+', text) if len(s) > 2]
@@ -84,7 +83,7 @@ class MyCollate:
         imgs = [item[0].unsqueeze(0) for item in batch]
         imgs = torch.cat(imgs, dim=0)
         targets = [item[1] for item in batch]
-        targets = pad_sequence(targets, batch_first=True, padding_value=self.pad_idx)
+        targets = pad_sequence(targets, batch_first=False, padding_value=self.pad_idx)
 
         return imgs, targets
 
@@ -113,18 +112,3 @@ def get_loader(
 
     return loader, dataset
 
-
-if __name__ == "__main__":
-    transform = None
-
-    loader, dataset = get_loader(
-        "torch_mapping.pkl", "text/captions.csv", transform=None
-    )
-
-    # for idx, (imgs, captions) in enumerate(loader):
-    #     # print(imgs.shape)
-    #     # print(f"image is : {imgs[0][0]}")
-    #     print(captions.shape)
-    #     print("captions are", captions)
-    #     print("Done for this part ---------------------------------------------------------------------")
-    #     break
