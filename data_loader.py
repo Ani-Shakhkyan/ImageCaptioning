@@ -20,7 +20,7 @@ class Vocabulary:
         return len(self.index_to_word)
 
     def tokenize(self, text):
-        return [s.lower() for s in re.split(r'\W+', text) if len(s) > 2]
+        return [s.lower() for s in re.split(r'\W+', text)]
 
     def build_vocabulary(self, sentence_dictionary):
         all_tokens = []
